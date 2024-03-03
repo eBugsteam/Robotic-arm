@@ -32,7 +32,7 @@ This repository contains the code and documentation for a robotic arm with force
 
 3. **Configuration:**
    - Adjust any necessary parameters or constants in the Arduino sketch according to your specific hardware setup.
-   - Calibrate the force feedback algorithm based on the dynamometer sensor readings to achieve desired performance.
+   - Calibrate the force feedback algorithm based on the dynamometer sensor readings to achieve the desired performance.
 
 
 
@@ -61,8 +61,10 @@ Refer to the 'docs' directory for detailed documentation covering the project ov
 
 ## Contact
 
-For any inquiries or support, please contact
-[Badamchizadeh@gmail.com](https://Badamchizadeh@gmail.com)
-[Your Email Address]
+For any inquiries or support, please contact:
+- [Badamchizadeh@gmail.com](https://Badamchizadeh@gmail.com)
+- [atadibazar2016@gmail.com](https://atadibazar2016@gmail.com)
+- [amirtahafarshbaf@gmail.com](https://amirtahafarshbaf@gmail.com)
+
 
 
