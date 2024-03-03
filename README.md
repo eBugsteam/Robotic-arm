@@ -61,8 +61,8 @@ Refer to the 'docs' directory for detailed documentation covering the project ov
 
 ## Contact
 
-For any inquiries or support, please contact:
-[Badamchizadeh@gmail.com](Badamchizadeh@gmail.com)
+For any inquiries or support, please contact
+[Badamchizadeh@gmail.com](https://Badamchizadeh@gmail.com)
 [Your Email Address]
 
 
