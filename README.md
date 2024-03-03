@@ -4,7 +4,7 @@
 
 ## Project Overview
 
-This repository contains the code and documentation for a robotic arm with force feedback control, developed as an undergraduate thesis project at Tabriz University, Faculty of Electrical and Computer Engineering under the supervision of Dr.Badamchizadeh. The project utilizes an Arduino microcontroller and a smart glove equipped with a dynamometer sensor to enable the robotic arm to apply force similar to a human hand.
+This repository contains the code and documentation for a robotic arm with force feedback control, developed as an undergraduate thesis project at Tabriz University, Faculty of Electrical and Computer Engineering under the supervision of [Dr.Badamchizadeh](https://scholar.google.com/citations?user=edtNtXAAAAAJ&hl=en). The project utilizes an Arduino microcontroller and a smart glove equipped with a dynamometer sensor to enable the robotic arm to apply force similar to a human hand.
 
 
 
