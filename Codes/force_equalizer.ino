@@ -65,7 +65,7 @@ void loop() {
 
 
 
-      if (abs(glove_average - gripper_average) >= 2) {
+      if (abs(glove_average - gripper_average) > 1) {
         status = false;
         servo.write(i);
         break;
@@ -84,7 +84,7 @@ void loop() {
   glove_average = floor((sensor0_value + sensor1_value) / 2);    // Calculate average value of two FSR
   gripper_average = floor((sensor2_value + sensor3_value) / 2);  // Calculate average value of two FSR
 
- // if(abs(glove_average - gripper_average <= 2)) status = true;
+  if(abs(glove_average - gripper_average < 1)) status = true;
 
   Serial.print("Glove Average: ");
   Serial.print(glove_average);
