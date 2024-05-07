@@ -8,6 +8,7 @@ hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_c
 
 # Initialize Video Capture
 cap = cv2.VideoCapture(0)
+cap.set(cv2.CAP_PROP_FPS, 30)  # Set frame rate to 60 fps (adjust as needed)
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -40,8 +41,8 @@ while cap.isOpened():
             yaw = np.arctan2(vector[0], vector[2]) * 180 / np.pi
 
             # Display roll, pitch, and yaw angles and center of twist
-            cv2.putText(frame, f"Roll: {roll:.2f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            cv2.putText(frame, f"Pitch: {pitch:.2f}", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            cv2.putText(frame, f"Roll: {roll:.1f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            cv2.putText(frame, f"Pitch: {pitch:.1f}", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             cv2.putText(frame, f"Yaw: {yaw:.2f}", (10, 110), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             cv2.circle(frame, (int(center_of_twist[0] * frame.shape[1]), int(center_of_twist[1] * frame.shape[0])),
                        5, (0, 255, 0), -1)
