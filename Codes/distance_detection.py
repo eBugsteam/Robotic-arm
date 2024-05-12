@@ -47,6 +47,10 @@ def calibrate_distance():
             # Display distance on frame
             cv2.putText(frame, f"Max Distance: {max_distance:.2f} pixels, Min Distance: {min_distance:.2f} pixels", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
 
+            # Draw a line between the landmarks
+            cv2.line(frame, (int(landmark_index[0] * frame.shape[1]), int(landmark_index[1] * frame.shape[0])),
+                     (int(landmark_thumb[0] * frame.shape[1]), int(landmark_thumb[1] * frame.shape[0])), (0, 255, 0), 2)
+
         cv2.imshow('Calibration', frame)
         key = cv2.waitKey(1)
         if key == ord('q'):
@@ -89,6 +93,10 @@ def main():
 
             # Display scaled distance on frame
             cv2.putText(frame, f"Scaled Distance: {scaled_distance:.2f}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+
+            # Draw a line between the landmarks
+            cv2.line(frame, (int(landmark_index[0] * frame.shape[1]), int(landmark_index[1] * frame.shape[0])),
+                     (int(landmark_thumb[0] * frame.shape[1]), int(landmark_thumb[1] * frame.shape[0])), (0, 255, 0), 2)
 
         cv2.imshow('Hand Landmarks', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
