@@ -1,118 +1,78 @@
-import cv2
-import mediapipe as mp
-import math
 import serial
-import time
+import cv2
+import math
+import mediapipe as mp
 
-# Establish serial connection with Arduino
-arduino = serial.Serial('COM10', 9600)  # Adjust 'COM3' to match your Arduino's port
+serialcomm = serial.Serial('COM10', 9600)
+serialcomm.timeout = 1
 
-# Function to calculate distance between two points
-def calculate_distance(point1, point2):
-    return math.sqrt((point2[0] - point1[0])**2 + (point2[1] - point1[1])**2)
+mp_hands = mp.solutions.hands
+hands = mp_hands.Hands(max_num_hands=1)
+mp_drawing = mp.solutions.drawing_utils
 
-# Function to detect landmarks on hand
-def detect_landmarks(image):
-    with mp.solutions.hands.Hands(static_image_mode=False, max_num_hands=1, min_detection_confidence=0.5) as hands:
-        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        results = hands.process(image_rgb)
-        if results.multi_hand_landmarks:
-            hand_landmarks = results.multi_hand_landmarks[0].landmark
-            return [(lm.x, lm.y) for lm in hand_landmarks]
-        else:
-            return None
+cap = cv2.VideoCapture(0)
+calibrating = False
+calibrated = False
+min_distance = float('inf')
+max_distance = 0
 
-# Function to calibrate the distance range
-def calibrate_distance():
-    cap = cv2.VideoCapture(0)
-    max_distance = 0
-    min_distance = float('inf')
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        print("Failed to capture frame")
+        break
 
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            print("Unable to capture video.")
-            break
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    results = hands.process(frame_rgb)
 
-        # Detect landmarks
-        landmarks = detect_landmarks(frame)
+    if results.multi_hand_landmarks:
+        for hand_landmarks in results.multi_hand_landmarks:
+            # Extracting landmarks for thumb and index finger
+            thumb = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
+            index = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
 
-        if landmarks:
-            # Specify landmarks for distance calculation (e.g., index finger and thumb)
-            landmark_index = landmarks[mp.solutions.hands.HandLandmark.INDEX_FINGER_TIP]
-            landmark_thumb = landmarks[mp.solutions.hands.HandLandmark.THUMB_TIP]
+            # Converting landmarks to pixel coordinates
+            thumb_x, thumb_y = int(thumb.x * frame.shape[1]), int(thumb.y * frame.shape[0])
+            index_x, index_y = int(index.x * frame.shape[1]), int(index.y * frame.shape[0])
 
-            # Calculate distance between landmarks
-            distance = calculate_distance(landmark_index, landmark_thumb)
+            # Drawing points and lines on the frame
+            cv2.circle(frame, (thumb_x, thumb_y), 7, (0, 255, 255), 1)
+            cv2.circle(frame, (index_x, index_y), 7, (0, 255, 255), 1)
+            cv2.line(frame, (thumb_x, thumb_y), (index_x, index_y), (0, 255, 0), 2)
 
-            # Update maximum and minimum distances
-            max_distance = max(max_distance, distance)
-            min_distance = min(min_distance, distance)
+            # Calculating distance between thumb and index finger
+            distance = int(math.sqrt((index_x - thumb_x) ** 2 + (index_y - thumb_y) ** 2) * 1.0)
+            distance = int((distance / 110) * 255)
 
-            # Display distance on frame
-            cv2.putText(frame, f"Max Distance: {max_distance:.2f} pixels, Min Distance: {min_distance:.2f} pixels", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+            if calibrating:
+                min_distance = min(min_distance, distance)
+                max_distance = max(max_distance, distance)
+                cv2.putText(frame, f"Min: {min_distance} Max: {max_distance}", (20, 50), cv2.FONT_HERSHEY_COMPLEX, .7, (255, 255, 255), 1)
+                cv2.putText(frame, "Calibrating... Move your hand to set min and max distances", (20, 30), cv2.FONT_HERSHEY_COMPLEX, .7, (255, 255, 255), 1)
+            elif calibrated:
+                distance = max(min_distance, min(distance, max_distance))  # Clamping distance between min and max
+                distance = int((distance - min_distance) / (max_distance - min_distance) * 255)
 
-            # Draw a line between the landmarks
-            cv2.line(frame, (int(landmark_index[0] * frame.shape[1]), int(landmark_index[1] * frame.shape[0])),
-                     (int(landmark_thumb[0] * frame.shape[1]), int(landmark_thumb[1] * frame.shape[0])), (0, 255, 0), 2)
+                cv2.putText(frame, str(distance), (20, 30), cv2.FONT_HERSHEY_COMPLEX, .7, (255, 255, 255), 1)
+                e = '\n'
+                try:
+                    serialcomm.write(f"{distance}{e}".encode())
+                except serial.SerialException as e:
+                    print("Serial communication error:", e)
+            else:
+                cv2.putText(frame, "Press 'c' to calibrate", (20, 30), cv2.FONT_HERSHEY_COMPLEX, .7, (255, 255, 255), 1)
 
-        cv2.imshow('Calibration', frame)
-        key = cv2.waitKey(1)
-        if key == ord('q'):
-            break
-        elif key == ord('c'):
-            break
+    cv2.imshow('Image', frame)
+    key = cv2.waitKey(20)
+    if key & 0xFF == ord('c'):
+        if not calibrating and not calibrated:
+            calibrating = True
+        elif calibrating:
+            calibrating = False
+            calibrated = True
 
-    cap.release()
-    cv2.destroyAllWindows()
-    return min_distance, max_distance
+    if key & 0xFF == 27:
+        break
 
-# Main function
-def main():
-    # Calibration
-    min_distance, max_distance = calibrate_distance()
-    # Calculate scaling factor
-    scale_factor = 10 / (max_distance - min_distance)
-
-    cap = cv2.VideoCapture(0)
-
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            print("Unable to capture video.")
-            break
-
-        # Detect landmarks
-        landmarks = detect_landmarks(frame)
-
-        if landmarks:
-            # Specify landmarks for distance calculation (e.g., index finger and thumb)
-            landmark_index = landmarks[mp.solutions.hands.HandLandmark.INDEX_FINGER_TIP]
-            landmark_thumb = landmarks[mp.solutions.hands.HandLandmark.THUMB_TIP]
-
-            # Calculate distance between landmarks
-            distance = calculate_distance(landmark_index, landmark_thumb)
-
-            # Scale the distance to a range of 0 to 10
-            scaled_distance = (distance - min_distance) * scale_factor
-
-            # Send the scaled distance value to Arduino
-            arduino.write(str(scaled_distance).encode())
-            time.sleep(0.1)  # Add a small delay to prevent flooding the serial buffer
-
-            # Display scaled distance on frame
-            cv2.putText(frame, f"Scaled Distance: {scaled_distance:.2f}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
-
-            # Draw a line between the landmarks
-            cv2.line(frame, (int(landmark_index[0] * frame.shape[1]), int(landmark_index[1] * frame.shape[0])),
-                     (int(landmark_thumb[0] * frame.shape[1]), int(landmark_thumb[1] * frame.shape[0])), (0, 255, 0), 2)
-
-        cv2.imshow('Hand Landmarks', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    cap.release()
-    cv2.destroyAllWindows()
-
-if __name__ == "__main__":
-    main()
+cap.release()
+cv2.destroyAllWindows()
