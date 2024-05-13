@@ -1,6 +1,11 @@
 import cv2
 import mediapipe as mp
 import math
+import serial
+import time
+
+# Establish serial connection with Arduino
+arduino = serial.Serial('COM10', 9600)  # Adjust 'COM3' to match your Arduino's port
 
 # Function to calculate distance between two points
 def calculate_distance(point1, point2):
@@ -63,7 +68,6 @@ def calibrate_distance():
     return min_distance, max_distance
 
 # Main function
-# Main function
 def main():
     # Calibration
     min_distance, max_distance = calibrate_distance()
@@ -86,15 +90,15 @@ def main():
             landmark_index = landmarks[mp.solutions.hands.HandLandmark.INDEX_FINGER_TIP]
             landmark_thumb = landmarks[mp.solutions.hands.HandLandmark.THUMB_TIP]
 
-            # Draw red dots on index finger tip and thumb tip
-            cv2.circle(frame, (int(landmark_index[0] * frame.shape[1]), int(landmark_index[1] * frame.shape[0])), 5, (0, 0, 255), -1)
-            cv2.circle(frame, (int(landmark_thumb[0] * frame.shape[1]), int(landmark_thumb[1] * frame.shape[0])), 5, (0, 0, 255), -1)
-
             # Calculate distance between landmarks
             distance = calculate_distance(landmark_index, landmark_thumb)
 
             # Scale the distance to a range of 0 to 10
             scaled_distance = (distance - min_distance) * scale_factor
+
+            # Send the scaled distance value to Arduino
+            arduino.write(str(scaled_distance).encode())
+            time.sleep(0.1)  # Add a small delay to prevent flooding the serial buffer
 
             # Display scaled distance on frame
             cv2.putText(frame, f"Scaled Distance: {scaled_distance:.2f}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
