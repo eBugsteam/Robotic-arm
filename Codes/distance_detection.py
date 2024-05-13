@@ -63,6 +63,7 @@ def calibrate_distance():
     return min_distance, max_distance
 
 # Main function
+# Main function
 def main():
     # Calibration
     min_distance, max_distance = calibrate_distance()
@@ -84,6 +85,10 @@ def main():
             # Specify landmarks for distance calculation (e.g., index finger and thumb)
             landmark_index = landmarks[mp.solutions.hands.HandLandmark.INDEX_FINGER_TIP]
             landmark_thumb = landmarks[mp.solutions.hands.HandLandmark.THUMB_TIP]
+
+            # Draw red dots on index finger tip and thumb tip
+            cv2.circle(frame, (int(landmark_index[0] * frame.shape[1]), int(landmark_index[1] * frame.shape[0])), 5, (0, 0, 255), -1)
+            cv2.circle(frame, (int(landmark_thumb[0] * frame.shape[1]), int(landmark_thumb[1] * frame.shape[0])), 5, (0, 0, 255), -1)
 
             # Calculate distance between landmarks
             distance = calculate_distance(landmark_index, landmark_thumb)
