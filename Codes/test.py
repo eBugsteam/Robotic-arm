@@ -3,8 +3,12 @@ import cv2
 import math
 import mediapipe as mp
 
-serialcomm = serial.Serial('COM1', 9600)
-serialcomm.timeout = 1
+try:
+    serialcomm = serial.Serial('COM1', 9600)
+    serialcomm.timeout = 1
+except serial.SerialException as e:
+    print(f"Error initializing serial communication: {e}")
+    exit()
 
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(max_num_hands=1)
@@ -20,7 +24,7 @@ while True:
     ret, frame = cap.read()
     if not ret:
         print("Failed to capture frame")
-        break
+        continue
 
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     results = hands.process(frame_rgb)
@@ -34,6 +38,30 @@ while True:
             # Converting landmarks to pixel coordinates
             thumb_x, thumb_y = int(thumb.x * frame.shape[1]), int(thumb.y * frame.shape[0])
             index_x, index_y = int(index.x * frame.shape[1]), int(index.y * frame.shape[0])
+
+            # Calculating the difference between vertical and horizontal coordinates
+            diff_x = index_x - thumb_x
+            diff_y = index_y - thumb_y
+
+            # Ensure the ratio is within the valid range for acos
+            if diff_x != 0:
+                ratio = diff_y / diff_x
+                # Clamp the ratio to be within the valid range for acos
+                ratio = max(-1, min(1, ratio))
+                # Calculating the arc cosine of (diff_y / diff_x)
+                angle = math.acos(ratio)
+                angle_degrees = math.degrees(angle)
+            else:
+                angle = None
+                angle_degrees = None
+
+            # Printing the coordinates, differences, and angle
+            if angle is not None:
+                print(f"Thumb Tip: ({thumb_x}, {thumb_y}), Index Finger Tip: ({index_x}, {index_y}), "
+                      f"Diff X: {diff_x}, Diff Y: {diff_y}, Arc Cosine: {angle_degrees:.2f} degrees")
+            else:
+                print(f"Thumb Tip: ({thumb_x}, {thumb_y}), Index Finger Tip: ({index_x}, {index_y}), "
+                      f"Diff X: {diff_x}, Diff Y: {diff_y}, Arc Cosine: Undefined (diff_x is zero)")
 
             # Drawing points and lines on the frame
             cv2.circle(frame, (thumb_x, thumb_y), 7, (0, 255, 255), 1)
@@ -50,8 +78,9 @@ while True:
                 cv2.putText(frame, f"Min: {min_distance} Max: {max_distance}", (20, 50), cv2.FONT_HERSHEY_COMPLEX, .7, (255, 255, 255), 1)
                 cv2.putText(frame, "Calibrating... Move your hand to set min and max distances", (20, 30), cv2.FONT_HERSHEY_COMPLEX, .7, (255, 255, 255), 1)
             elif calibrated:
-                distance = max(min_distance, min(distance, max_distance))  # Clamping distance between min and max
-                distance = int((distance - min_distance) / (max_distance - min_distance) * 255)
+                if max_distance > min_distance:
+                    distance = max(min_distance, min(distance, max_distance))  # Clamping distance between min and max
+                    distance = int((distance - min_distance) / (max_distance - min_distance) * 255)
 
                 cv2.putText(frame, str(distance), (20, 30), cv2.FONT_HERSHEY_COMPLEX, .7, (255, 255, 255), 1)
                 e = '\n'
