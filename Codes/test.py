@@ -14,7 +14,7 @@ mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(max_num_hands=1)
 mp_drawing = mp.solutions.drawing_utils
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 calibrating = False
 calibrated = False
 min_distance = float('inf')
@@ -43,25 +43,13 @@ while True:
             diff_x = index_x - thumb_x
             diff_y = index_y - thumb_y
 
-            # Ensure the ratio is within the valid range for acos
-            if diff_x != 0:
-                ratio = diff_y / diff_x
-                # Clamp the ratio to be within the valid range for acos
-                ratio = max(-1, min(1, ratio))
-                # Calculating the arc cosine of (diff_y / diff_x)
-                angle = math.acos(ratio)
-                angle_degrees = math.degrees(angle)
-            else:
-                angle = None
-                angle_degrees = None
+            # Calculating the angle using atan2
+            angle = math.atan2(diff_y, diff_x)
+            angle_degrees = math.degrees(angle)
 
             # Printing the coordinates, differences, and angle
-            if angle is not None:
-                print(f"Thumb Tip: ({thumb_x}, {thumb_y}), Index Finger Tip: ({index_x}, {index_y}), "
-                      f"Diff X: {diff_x}, Diff Y: {diff_y}, Arc Cosine: {angle_degrees:.2f} degrees")
-            else:
-                print(f"Thumb Tip: ({thumb_x}, {thumb_y}), Index Finger Tip: ({index_x}, {index_y}), "
-                      f"Diff X: {diff_x}, Diff Y: {diff_y}, Arc Cosine: Undefined (diff_x is zero)")
+            print(f"Thumb Tip: ({thumb_x}, {thumb_y}), Index Finger Tip: ({index_x}, {index_y}), "
+                  f"Diff X: {diff_x}, Diff Y: {diff_y}, Angle: {angle_degrees:.2f} degrees")
 
             # Drawing points and lines on the frame
             cv2.circle(frame, (thumb_x, thumb_y), 7, (0, 255, 255), 1)
@@ -69,7 +57,7 @@ while True:
             cv2.line(frame, (thumb_x, thumb_y), (index_x, index_y), (0, 255, 0), 2)
 
             # Calculating distance between thumb and index finger
-            distance = int(math.sqrt((index_x - thumb_x) ** 2 + (index_y - thumb_y) ** 2) * 1.0)
+            distance = int(math.sqrt(diff_x ** 2 + diff_y ** 2) * 1.0)
             distance = int((distance / 110) * 255)
 
             if calibrating:
