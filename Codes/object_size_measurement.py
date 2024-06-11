@@ -13,14 +13,18 @@ def show_images(images):
     cv2.destroyAllWindows()
 
 # Initialize camera
-cap = cv2.VideoCapture(1)
-cap.set(3, 1920)  # Width
-cap.set(4, 1080)  # Height
+cap = cv2.VideoCapture(1)  # Ensure this is the correct ID for your LG G3 Beat camera
+cap.set(3, 3264)  # Width
+cap.set(4, 2448)  # Height
 cap.set(10, 160)  # Brightness
 
 # Reference object dimensions (known dimensions in cm)
 ref_object_width = 2
 ref_object_height = 2
+
+# Define minimum and maximum contour area to filter objects
+min_contour_area = 200
+max_contour_area = 10000
 
 while True:
     # Read frame from camera
@@ -31,9 +35,9 @@ while True:
     # Preprocess the image
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (9, 9), 0)
-    edged = cv2.Canny(blur, 50, 100)
-    edged = cv2.dilate(edged, None, iterations=1)
-    edged = cv2.erode(edged, None, iterations=1)
+
+    # Use adaptive thresholding instead of fixed thresholds
+    edged = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 2)
 
     # Find contours
     cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -49,8 +53,8 @@ while True:
     # Sort contours from left to right as leftmost contour is reference object
     (cnts, _) = contours.sort_contours(cnts)
 
-    # Remove contours which are not large enough
-    cnts = [x for x in cnts if cv2.contourArea(x) > 100]
+    # Filter contours by area
+    cnts = [x for x in cnts if min_contour_area < cv2.contourArea(x) < max_contour_area]
 
     if len(cnts) == 0:
         cv2.imshow("Measurement", image)
