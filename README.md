@@ -12,7 +12,7 @@ This repository contains the code and documentation for a robotic arm with force
 In manufacturing, force feedback robots play a crucial role in assembly and quality control processes. These robots can delicately handle fragile components and perform intricate tasks with a high degree of accuracy. By providing operators with tactile feedback, force feedback robots enable them to detect defects or inconsistencies in products during the assembly process, ensuring high-quality standards and reducing waste.
 
 Force feedback robots also find applications in virtual reality (VR) and augmented reality (AR) environments. By integrating haptic feedback into VR and AR simulations, users can experience a more immersive and realistic environment. This technology is particularly valuable in training simulations for tasks that require manual dexterity and tactile interaction, such as surgical training, vehicle operation, or equipment maintenance.
-
+https://youtu.be/N1GuY1QTdp0
 
 ## Components
 
