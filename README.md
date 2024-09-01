@@ -46,8 +46,7 @@ https://github.com/user-attachments/assets/ee541548-3434-4398-8c85-c36fef1b4215
 
 ## Contact
 
-For any inquiries or support, please contact:
-- [Badamchizadeh@gmail.com](https://Badamchizadeh@gmail.com)
+For any inquiries or support, please contact 📧
 - [atadibazar2016@gmail.com](https://atadibazar2016@gmail.com)
 - [amirtahafarshbaf@gmail.com](https://amirtahafarshbaf@gmail.com)
 
