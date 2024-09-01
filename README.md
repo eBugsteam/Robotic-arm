@@ -22,7 +22,7 @@ https://github.com/user-attachments/assets/ee541548-3434-4398-8c85-c36fef1b4215
 
 1. Arduino Microcontroller(at least UNO)
 2. Robotic Arm
-3. FSR sensors * 4 
+3. [FSR sensors](https://www.amazon.com/Flexible-Resistors-Pressure-Compatible-microbit/dp/B08P8ZJ6KM/ref=sr_1_1?crid=1KHRGL5X0TVUJ&dib=eyJ2IjoiMSJ9.6ybxotGsCsxp8FxyL5e5-40k5xDhuIzEDWVSpX-RSSDTAhnEXbHKPzovYV4UPcNU.T0v7rWu6mG02m5Ld_45DwqRqr3NR29PGl4i74sZyq6I&dib_tag=se&keywords=fsr+sensor&qid=1725211210&sprefix=fsr+s%2Caps%2C293&sr=8-1) * 4 
 4. Servo motors * 6
 
 
