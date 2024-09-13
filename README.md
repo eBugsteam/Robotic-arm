@@ -9,7 +9,7 @@ This repository contains the code and documentation for a robotic arm with force
 
  One prominent application of force feedback robots is in surgical procedures. Surgeons can utilize haptic feedback to perform minimally invasive surgeries with greater precision and control. By providing real-time force feedback, surgeons can better navigate delicate tissues and organs, reducing the risk of damage and improving patient outcomes. Additionally, force feedback robots enable remote surgeries, allowing expert surgeons to perform procedures from distant locations, potentially increasing access to specialized medical care in underserved areas.
 
-In manufacturing, force feedback robots play a crucial role in assembly and quality control processes. These robots can delicately handle fragile components and perform intricate tasks with a high degree of accuracy. By providing operators with tactile feedback, force feedback robots enable them to detect defects or inconsistencies in products during the assembly process, ensuring high-quality standards and reducing waste.
+In manufacturing, force feedback robots are crucial in assembly and quality control processes. These robots can delicately handle fragile components and perform intricate tasks with a high degree of accuracy. By providing operators with tactile feedback, force feedback robots enable them to detect defects or inconsistencies in products during the assembly process, ensuring high-quality standards and reducing waste.
 
 Force feedback robots also find applications in virtual reality (VR) and augmented reality (AR) environments. By integrating haptic feedback into VR and AR simulations, users can experience a more immersive and realistic environment. This technology is particularly valuable in training simulations for tasks that require manual dexterity and tactile interaction, such as surgical training, vehicle operation, or equipment maintenance.
 
@@ -38,17 +38,10 @@ https://github.com/user-attachments/assets/ee541548-3434-4398-8c85-c36fef1b4215
    - Upload the Arduino sketch provided in the 'src' directory to the Arduino board using the Arduino IDE.
 
 3. **Configuration:**
-   - Adjust any necessary parameters or constants in the Arduino sketch according to your specific hardware setup.
+   - Adjust any parameters or constants in the Arduino sketch according to your specific hardware setup.
    - Calibrate the force feedback algorithm based on the dynamometer sensor readings to achieve the desired performance.
 
 
-
-
-## Contact
-
-For any inquiries or support, please contact 📧
-- [atadibazar2016@gmail.com](https://atadibazar2016@gmail.com)
-- [amirtahafarshbaf@gmail.com](https://amirtahafarshbaf@gmail.com)
 
 
 
