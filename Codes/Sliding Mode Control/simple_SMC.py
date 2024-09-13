@@ -5,8 +5,8 @@ from scipy.integrate import solve_ivp
 # System parameters
 a = 1       # System coefficient a
 b = 2       # System coefficient b
-lambda_ = 10  # Sliding surface parameter
-k = 8       # Sliding control gain
+lambda_ = 5  # Sliding surface parameter
+k = 1       # Sliding control gain
 
 # Desired state
 x_d = 80     # Desired value of x(t)
@@ -34,7 +34,7 @@ def smc_system(t, x):
 
 # Simulation time
 t_span = (0, 10)  # Time span for simulation
-x0 = [0]          # Initial condition
+x0 = [5]          # Initial condition
 
 # Solve the system using solve_ivp
 sol = solve_ivp(smc_system, t_span, x0, t_eval=np.linspace(0, 10, 1000))
@@ -48,3 +48,4 @@ plt.ylabel('State x(t)')
 plt.legend()
 plt.grid(True)
 plt.show()
+
