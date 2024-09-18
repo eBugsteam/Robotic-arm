@@ -7,8 +7,8 @@ L1 = 1.0  # Length of the first link
 L2 = 1.0  # Length of the second link
 
 # SMC parameters
-lambda_smc = 1.0  # Sliding surface gain
-k_smc = 5.0  # Control gain for sliding mode
+lambda_smc = 0.09  # Sliding surface gain
+k_smc = 1  # Control gain for sliding mode
 
 # Function for forward kinematics
 def forward_kinematics(theta1, theta2):
@@ -53,8 +53,8 @@ theta1_dot = 0.0  # Angular velocity for joint 1
 theta2_dot = 0.0  # Angular velocity for joint 2
 
 # Define target angles for the joints (desired positions)
-target_theta1 = np.pi / 3  # Desired angle for joint 1
-target_theta2 = np.pi / 6  # Desired angle for joint 2
+target_theta1 = np.pi / 2  # Desired angle for joint 1
+target_theta2 = np.pi / 2  # Desired angle for joint 2
 
 # Function to initialize the animation
 def init():

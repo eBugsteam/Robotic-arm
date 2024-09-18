@@ -67,11 +67,11 @@ line, = ax.plot([], [], marker='o')
 
 # Initial joint angles (in radians)
 theta1 = np.pi / 4  # 45 degrees
-theta2 = np.pi / 4  # 45 degrees
+theta2 = np.pi / 4 # 45 degrees
 
 # Define target angles for the joints (desired positions)
-target_theta1 = np.pi / 3  # Desired angle for joint 1
-target_theta2 = np.pi / 6  # Desired angle for joint 2
+target_theta1 = np.pi / 2 # Desired angle for joint 1
+target_theta2 = np.pi / 2  # Desired angle for joint 2
 
 # Function to initialize the animation
 def init():
