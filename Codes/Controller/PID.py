@@ -66,8 +66,8 @@ plt.grid(True)
 line, = ax.plot([], [], marker='o')
 
 # Initial joint angles (in radians)
-theta1 = np.pi / 4  # 45 degrees
-theta2 = np.pi / 4 # 45 degrees
+theta1 = np.pi / 8  # 45 degrees
+theta2 = np.pi / 8 # 45 degrees
 
 # Define target angles for the joints (desired positions)
 target_theta1 = np.pi / 2 # Desired angle for joint 1
