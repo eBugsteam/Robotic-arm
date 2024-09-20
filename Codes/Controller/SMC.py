@@ -7,10 +7,14 @@ L1 = 1.0  # Length of the first link
 L2 = 1.0  # Length of the second link
 
 # Define Sliding Mode Control parameters
-lambda1 = 1.0 # Slope of the sliding surface for joint 1
-lambda2 = 1.0  # Slope of the sliding surface for joint 2
-eta1 = 0.10  # Control gain for joint 1
-eta2 = 0.10 # Control gain for joint 2
+lambda1 = 10  # Slope of the sliding surface for joint 1
+lambda2 = 10  # Slope of the sliding surface for joint 2
+eta1 = 0.05  # Control gain for joint 1
+eta2 = 0.05  # Control gain for joint 2
+
+# Initialize previous errors for derivative calculation
+previous_error1 = 0
+previous_error2 = 0
 
 def forward_kinematics(theta1, theta2):
     """
@@ -24,20 +28,23 @@ def forward_kinematics(theta1, theta2):
     
     return (x1, y1), (x2, y2)
 
-def sliding_mode_control(target, current, lambda_, eta, dt):
+def sliding_mode_control(target, current, previous_error, lambda_, eta, dt):
     """
-    A basic Sliding Mode Controller that calculates the control action based on error.
+    A basic Sliding Mode Controller that calculates the control action based on error and its derivative.
     """
     # Error between the target and current angle
     error = target - current
     
+    # Derivative of the error
+    error_derivative = (error - previous_error) / dt
+    
     # Sliding surface
-    s = lambda_ * error 
+    s = lambda_ * error + 0.8* error_derivative
     
     # Control action
     control = eta * np.sign(s)
     
-    return control
+    return control, error
 
 # Initialize figure and axis
 fig, ax = plt.subplots()
@@ -50,15 +57,15 @@ plt.ylabel('Y')
 plt.grid(True)
 
 # Initialize the lines that will represent the arm
-line, = ax.plot([], [], marker='o', linewidth = 2.5)
+line, = ax.plot([], [], marker='o', linewidth=2.5)
 
 # Initial joint angles (in radians)
 theta1 = np.pi / 8  # 45 degrees
 theta2 = np.pi / 8  # 45 degrees
 
 # Define target angles for the joints (desired positions)
-target_theta1 = np.pi / 2  # Desired angle for joint 1
-target_theta2 = np.pi / 2  # Desired angle for joint 2
+target_theta1 = np.pi / 4  # Desired angle for joint 1
+target_theta2 = np.pi / 4  # Desired angle for joint 2
 
 # Function to initialize the animation
 def init():
@@ -67,16 +74,16 @@ def init():
 
 # Function to update the frame in the animation
 def update(frame):
-    global theta1, theta2
+    global theta1, theta2, previous_error1, previous_error2
     
     # Time step (assume constant for simplicity)
     dt = 0.1
     
     # Apply Sliding Mode Control to joint 1
-    control1 = sliding_mode_control(target_theta1, theta1, lambda1, eta1, dt)
+    control1, previous_error1 = sliding_mode_control(target_theta1, theta1, previous_error1, lambda1, eta1, dt)
     
     # Apply Sliding Mode Control to joint 2
-    control2 = sliding_mode_control(target_theta2, theta2, lambda2, eta2, dt)
+    control2, previous_error2 = sliding_mode_control(target_theta2, theta2, previous_error2, lambda2, eta2, dt)
     
     # Update the joint angles with the control action
     theta1 += control1 * dt
